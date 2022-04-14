@@ -4,16 +4,9 @@
 
 using namespace DirectX;
 
-GameScene::GameScene() {
+GameScene::GameScene() {}
 
-}
-
-GameScene::~GameScene() { 
-	
-	delete sprite_;
-	delete model_;
-
-}
+GameScene::~GameScene() { delete model_; }
 
 void GameScene::Initialize() {
 
@@ -22,59 +15,66 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	//ファイルを指定してテクスチャを読み込む
+	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
-	//スプライトの生成
-	sprite_ = Sprite::Create(textureHandle_, {100, 50});
+	// X, Y, Z 方向のスケーリングを設定
+	worldTransform_.scale_ = {scaleValX_, scaleValY_, scaleValZ_};
+	// X, Y, Z 軸周りの回転角を設定
+	worldTransform_.rotation_ = {rotationValX_, rotationValY_, rotationValZ_};
+	// X, Y, Z 軸周りの平行移動を設定
+	worldTransform_.translation_ = {translationValX_, translationValY_, translationValZ_};
+
+#pragma region モデル部分
 
 	// 3Dモデルの生成
 	model_ = Model::Create();
-
-   //トランスフォームの初期化
+	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-	
-	//ビュープロジェクションの初期化
+	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
-	//サウンドデータの読み込み
-	soundDataHandle_=audio_->LoadWave("se_sad03.wav");
-
-	//音声再生
-	audio_->PlayWave(soundDataHandle_);
-	voiceHandle_ = audio_->PlayWave(soundDataHandle_, true);
-
+#pragma endregion
 }
 
 void GameScene::Update() {
 
-	//スプライトの今の座標を取得
-	XMFLOAT2 position = sprite_->GetPosition();
-	//座標を{2,0}移動
-	position.x += 2.0f;
-	position.y += 1.0f;
-	//移動した座標をスプライトに反映
-	sprite_->SetPosition(position);
+#pragma region translation debug string
 
-	//スペースキーを押した瞬間
-	if (input_->TriggerKey(DIK_SPACE)) {
-		//音声停止
-		audio_->StopWave(voiceHandle_);
-	}
+	// 値を含んだ文字列
+	std::string transStrDebug = std::string("translation:(") + std::to_string(translationValX_) +
+	                            std::string(", ") + std::to_string(translationValY_) +
+	                            std::string(", ") + std::to_string(translationValZ_) +
+	                            std::string(")");
 
-	//デバッグテキストの表示
-	debugText_->Print("Kaizoku ni oreha naru", 50, 50, 1.0f);
+	// デバッグテキストの表示
+	debugText_->Print(transStrDebug, 50, 50, 1.0f);
 
-	//書式指定付き表示
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("year*%d", 2001);
+#pragma endregion
 
-	//変数の値をインクリメント
-	value_++;
-	//値を含んだ文字列
-	std::string strDebug = std::string("Value") + std::to_string(value_);
-	//デバッグテキストの表示
-	debugText_->Print(strDebug, 50, 100, 1.0f);
+#pragma region rotation debug string
+
+	// 値を含んだ文字列
+	std::string rotStrDebug = std::string("rotation:(") + std::to_string(rotationValX_) +
+	                          std::string(", ") + std::to_string(rotationValY_) +
+	                          std::string(", ") + std::to_string(rotationValZ_) + std::string(")");
+
+	// デバッグテキストの表示
+	debugText_->Print(rotStrDebug, 50, 80, 1.0f);
+
+#pragma endregion
+
+#pragma region scale debug string
+
+	// 値を含んだ文字列
+	std::string scaleStrDebug = std::string("scale:(") + std::to_string(scaleValX_) +
+	                            std::string(", ") + std::to_string(scaleValY_) + std::string(", ") +
+	                            std::to_string(scaleValZ_) + std::string(")");
+
+	// デバッグテキストの表示
+	debugText_->Print(scaleStrDebug, 50, 110, 1.0f);
+
+#pragma endregion
 }
 
 void GameScene::Draw() {
@@ -88,8 +88,6 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
-
-
 	/// </summary>
 
 	// スプライト描画後処理
@@ -105,8 +103,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	//3Dモデル描画
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -118,11 +116,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite_->Draw();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
-	//
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
