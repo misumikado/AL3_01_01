@@ -47,6 +47,7 @@ void GameScene::Initialize() {
 
 	//ビュープロジェクション
 	viewProjection_.Initialize();
+
 }
 
 void GameScene::Update() {
@@ -77,7 +78,9 @@ void GameScene::Update() {
 		debugText_->Printf(
 		  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 	}
+
 	//注視点移動処理
+
 	{
 		//注視点の移動ベクトル
 		XMFLOAT3 move = {0, 0, 0};
@@ -106,7 +109,9 @@ void GameScene::Update() {
 		  "target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
 		  viewProjection_.target.z);
 	}
+
 	//上方向回転処理
+
 	{
 		//上方向の回転速さ[ラジアン/frame]
 		const float kUpRotSpeed = 0.05f;
@@ -128,6 +133,7 @@ void GameScene::Update() {
 		debugText_->Printf(
 		  "up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 	}
+
 }
 
 void GameScene::Draw() {
