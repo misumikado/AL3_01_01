@@ -180,7 +180,7 @@ void GameScene::Update() {
 	}
 //大元から順に更新していく
 //大元
-	worldTransform_[PartId::Spine].UpdateMatrix();
+	worldTransform_[PartId::Root].UpdateMatrix();
 	//脊椎
 	worldTransform_[PartId::Spine].UpdateMatrix();
 	//胸
@@ -198,6 +198,31 @@ void GameScene::Update() {
 	// 右足
 	worldTransform_[PartId::LegR].UpdateMatrix();
 
+	//上半身回転処理
+	{
+		//上半身の回転速度[ラジアン/frame]
+		const float kChestRotSpeed = 0.05f;
+
+		//押した方向で移動ベクトルを変更
+		if (input_->PushKey(DIK_U)) {
+			worldTransform_[PartId::Chest].rotation_.y -= kChestRotSpeed;
+		} else if (input_->PushKey(DIK_I)) {
+			worldTransform_[PartId::Chest].rotation_.y += kChestRotSpeed;
+		}
+	}
+	//上半身回転処理
+	{
+		//下半身の回転速度[ラジアン/frame]
+		const float kHipRotSpeed = 0.05f;
+
+		//押した方向で移動ベクトルを変更
+		if (input_->PushKey(DIK_J)) {
+			worldTransform_[PartId::Hip].rotation_.y -= kHipRotSpeed;
+		} else if (input_->PushKey(DIK_K)) {
+			worldTransform_[PartId::Hip].rotation_.y += kHipRotSpeed;
+		}
+
+	}
 }
 
 void GameScene::Draw() {
