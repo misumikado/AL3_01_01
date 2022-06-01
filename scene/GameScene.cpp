@@ -198,6 +198,7 @@ void GameScene::Update() {
 	// 右足
 	worldTransform_[PartId::LegR].UpdateMatrix();
 
+
 	//上半身回転処理
 	{
 		//上半身の回転速度[ラジアン/frame]
